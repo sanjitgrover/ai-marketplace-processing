@@ -1,4 +1,3 @@
-Try it nowAsk again laterDon't show again
 from fastapi import FastAPI
 from pydantic import BaseModel
 import pickle
@@ -7,7 +6,7 @@ import os, platform
 
 
 app = FastAPI()
-
+model = None
 # Define the input data model
 class InputData(BaseModel):
     var1: float
@@ -19,22 +18,25 @@ class InputData(BaseModel):
 # Define the POST endpoint to accept the model pickel location 
 @app.post("/upload")
 async def upload(input_path: str):
+    global model
     print(f'Model Path is - {input_path}')
     # Load the pickle file containing the trained ML model test/drive/model.pkl
-    with open(f'{input_path}', 'rb') as f:
-        model = pickle.load(f)
+    # with open(f'{input_path}', 'rb') as f:
+        # model = pickle.load(f)
 
 # Define the GET endpoint to provide the swagger URL for the uploaded model
 # http://localhost:8000/docs
+# http://localhost:8000/openapi.json
 @app.get("/tryout")
 def tryout():
     swagger_url = "" 
     if platform.system() == "Windows":
         print(platform.uname().node)
-        swagger_url = platform.uname().node
+        # swagger_url = platform.uname().node
     else:
-        print(os.uname()[1])   # doesnt work on windows
+        print(os.environ)   # doesnt work on windows
         swagger_url = os.uname()[1]
+        # swagger_url = "Madan Madi"
     return swagger_url
 
 # Define the POST endpoint to accept the input data and make predictions
